@@ -1,6 +1,6 @@
 #include "StackImplementation.h"
 #include "Vector.h"
-#include "fwlist.h"
+#include "FWList.h"
 
 class VectorStack : public IStackImplementation
 {
