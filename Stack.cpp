@@ -30,18 +30,7 @@ Stack::Stack(const ValueType* valueArray, const size_t arraySize, StackContainer
 }
 Stack::Stack(const Stack& copyStack) : _containerType(copyStack._containerType)
 {
-    delete _pimpl;
-    switch (_containerType)
-    {
-        case StackContainer::Vector:
-            _pimpl = new VectorStack;
-            *static_cast<VectorStack*>(_pimpl) = *static_cast<VectorStack*>(copyStack._pimpl);
-            break;
-        case StackContainer::List:
-            _pimpl = new FWListStack;
-            *static_cast<FWListStack*>(_pimpl) = *static_cast<FWListStack*>(copyStack._pimpl);
-            break;
-    }
+    *this = copyStack;
 }
 Stack& Stack::operator=(const Stack& copyStack)
 {
@@ -52,12 +41,10 @@ Stack& Stack::operator=(const Stack& copyStack)
         switch (_containerType)
         {
             case StackContainer::Vector:
-                _pimpl = new VectorStack;
-                *static_cast<VectorStack*>(_pimpl) = *static_cast<VectorStack*>(copyStack._pimpl);
+                _pimpl = new VectorStack(*dynamic_cast<VectorStack*>(copyStack._pimpl));
                 break;
             case StackContainer::List:
-                _pimpl = new FWListStack;
-                *static_cast<FWListStack*>(_pimpl) = *static_cast<FWListStack*>(copyStack._pimpl);
+                _pimpl = new FWListStack(*dynamic_cast<FWListStack*>(copyStack._pimpl));
                 break;
         }
     }
@@ -65,10 +52,7 @@ Stack& Stack::operator=(const Stack& copyStack)
 }
 Stack::Stack(Stack&& moveStack) noexcept
 {
-    delete _pimpl;
-    _containerType = moveStack._containerType;
-    _pimpl = moveStack._pimpl;
-    moveStack._pimpl = nullptr;
+    *this = std::move(moveStack);
 }
 Stack& Stack::operator=(Stack&& moveStack) noexcept
 {
